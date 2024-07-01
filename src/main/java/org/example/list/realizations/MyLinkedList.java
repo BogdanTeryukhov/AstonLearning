@@ -4,7 +4,7 @@ import org.example.list.MyList;
 import java.util.Comparator;
 
 /**
- * Односвязный список. Содержит в узлы, которые хранят ссылки на свои элементы и следующие узлы
+ * Двусвязный список. Содержит в узлы, которые хранят ссылки на свои элементы, следующие узлы и предыдущие узлы
  * @param <T>
  */
 public class MyLinkedList<T> implements MyList<T> {
@@ -12,6 +12,7 @@ public class MyLinkedList<T> implements MyList<T> {
      * Голова списка. Начальный узел
      */
     private Node head;
+    private Node tail;
 
     /**
      * Добавление элемента в конец списка
@@ -30,6 +31,7 @@ public class MyLinkedList<T> implements MyList<T> {
             }
             currentNode.setNextNode(addNode);
         }
+        tail = addNode;
     }
     /**
      * Добавление элемента в конец списка по индексу
@@ -48,6 +50,7 @@ public class MyLinkedList<T> implements MyList<T> {
         }
         addNode.setNextNode(currentNode.getNextNode());
         currentNode.setNextNode(addNode);
+        tail = addNode;
     }
 
     /**
@@ -57,6 +60,13 @@ public class MyLinkedList<T> implements MyList<T> {
      */
     @Override
     public T get(int index) {
+        if (index == 0){
+            return head.getValue();
+        }
+        else if (index == size() - 1){
+            return tail.getValue();
+        }
+
         Node currentNode = head;
         for (int i = 0; i < index; i++) {
             if (currentNode.getNextNode() == null){
@@ -75,6 +85,7 @@ public class MyLinkedList<T> implements MyList<T> {
         if (index == 0){
             if (head.getNextNode() == null){
                 head = null;
+                tail = null;
             }
             else {
                 head = head.getNextNode();
@@ -97,6 +108,7 @@ public class MyLinkedList<T> implements MyList<T> {
     @Override
     public void clean() {
         this.head = null;
+        this.tail = null;
     }
 
     @Override
@@ -130,12 +142,23 @@ public class MyLinkedList<T> implements MyList<T> {
         return print();
     }
 
+    public int size(){
+        int length = 0;
+        Node currentNode = head;
+        while (currentNode != null){
+            length++;
+            currentNode = currentNode.getNextNode();
+        }
+        return length;
+    }
+
     /**
-     * Подкласс, представляющий узел списка. Узел содержит значение и указатель на следующий узел
+     * Подкласс, представляющий узел списка. Узел содержит значение, ссылку на следующий и предыдущий узел
      */
     class Node implements Comparator<T> {
         private T value;
         private Node nextNode;
+        private Node prevNode;
         public Node(T value) {
             this.value = value;
         }
@@ -156,6 +179,13 @@ public class MyLinkedList<T> implements MyList<T> {
             this.nextNode = nextNode;
         }
 
+        public Node getPrevNode() {
+            return prevNode;
+        }
+
+        public void setPrevNode(Node prevNode) {
+            this.prevNode = prevNode;
+        }
 
         @Override
         public String toString() {
